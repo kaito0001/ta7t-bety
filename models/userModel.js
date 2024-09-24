@@ -2,8 +2,6 @@ const crypto = require("crypto");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
-const catchAsync = require("../utils/catchAsync");
-const { type } = require("os");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -83,6 +81,20 @@ userSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+userSchema.pre("save", function (next) {
+  if (this.role === "probider") {
+    this.favoriteLocations = undefined;
+  }
+
+  if (this.role === "admin" || this.role === "moderator") {
+    this.favoriteLocations = undefined;
+    this.favoriteProviders = undefined;
+    this.ratingAverage = undefined;
+  }
+
   next();
 });
 
