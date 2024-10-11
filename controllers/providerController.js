@@ -39,7 +39,7 @@ exports.resizeProviderImages = catchAsync(async (req, res, next) => {
     const criminalRecordFilename = `provider-${
       req.params.id
     }-${Date.now()}-criminalRecord.jpeg`;
-    await processImage(file);
+    await processImage(req.file);
     req.body.criminalRecord = criminalRecordFilename;
   }
 
@@ -58,8 +58,8 @@ exports.resizeProviderImages = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getAllProviders = factory.getAll(Provider);
-exports.getProviderById = factory.getOne(Provider);
+exports.getAllProviders = factory.getAll(Provider , {path:"reviews"});
+exports.getProviderById = factory.getOne(Provider, { path: "reviews" });
 exports.updateProvider = factory.updateOne(Provider);
 exports.deleteProvider = factory.deleteOne(Provider);
 
@@ -73,7 +73,7 @@ exports.createProvider = catchAsync(async (req, res) => {
         .json({ message: "Only providers can create provider records" });
     }
 
-    req.body.providerId = loggedInUser.id;
+    req.body.providerID = loggedInUser.id;
 
     const provider = await Provider.create(req.body);
     res.status(201).json({

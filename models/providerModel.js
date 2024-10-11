@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const providerSchema = new mongoose.Schema(
   {
-    providerId: {
+    providerID: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
       required: true,
@@ -45,10 +45,6 @@ const providerSchema = new mongoose.Schema(
       type: String,
       trim: true,
       match: /\.(jpg|jpeg|png|pdf)$/,
-    },
-    posts: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Post",
     },
     lastPhotoAt: {
       type: Date,
@@ -102,13 +98,32 @@ const providerSchema = new mongoose.Schema(
         },
       },
     },
-  },
+    posts: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Post", 
+        required: true,
+      },
+    ],
+  }
+  ,
   {
-    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
 providerSchema.index({ "locations.coordinates": "2dsphere" });
+
+
+providerSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "provider",
+  localField: "_id",
+});
+
+
+
 
 const Provider = mongoose.model("Provider", providerSchema);
 module.exports = Provider;
