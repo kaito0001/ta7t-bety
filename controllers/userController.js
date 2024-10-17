@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const factory = require("./handlerFactory");
+const uploadFile = require("../utils/uploadBase64");
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -30,8 +31,18 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
   }
 
+  if (req.body.photo) {
+    req.body.photo = await uploadFile(req.body.photo, false);
+  }
+
   // 2) Filter unwanted fields
-  const filteredBody = filterObj(req.body, "name", "email", "phoneNumber");
+  const filteredBody = filterObj(
+    req.body,
+    "name",
+    "email",
+    "phoneNumber",
+    "photo"
+  );
 
   // 3) Update user document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
