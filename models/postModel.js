@@ -6,14 +6,15 @@ const postSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "A post must belong to a provider"],
   },
-  image: {
-    type: String,
-  },
+  images: [String],
   title: {
     type: String,
     required: [true, "A post must have a title"],
     trim: true,
-    maxlength: [20, "A post title must have less or equal then 20 characters"],
+    maxlength: [
+      20,
+      "A post title must have less than or equal to 20 characters",
+    ],
   },
   content: {
     type: String,
@@ -31,13 +32,6 @@ const postSchema = new mongoose.Schema({
     default: false,
   },
 });
-
-// postSchema.pre(/^create/, function (next) {
-//   this.providerID = req.user.id;
-//   console.log(req.user.id);
-
-//   next();
-// });
 
 const Post = mongoose.model("Post", postSchema);
 module.exports = Post;

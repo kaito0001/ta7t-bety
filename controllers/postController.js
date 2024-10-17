@@ -1,6 +1,7 @@
 const Post = require("../models/postModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
+const uploadFile = require("../utils/uploadBase64");
 const factory = require("./handlerFactory");
 
 exports.getProviderPosts = catchAsync(async (req, res, next) => {
@@ -39,6 +40,9 @@ exports.getMyposts = catchAsync(async (req, res, next) => {
 
 exports.createPost = catchAsync(async (req, res, next) => {
   req.body.providerID = req.user.id;
+  if (req.body.image) {
+    req.body.images = await uploadFile(req.body.images, true);
+  }
   const post = await Post.create(req.body);
 
   res.status(201).json({

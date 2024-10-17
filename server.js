@@ -10,6 +10,8 @@ process.on("uncaughtException", (err) => {
 
 dotenv.config({ path: "./config.env" });
 
+// console.log(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+
 const DB = process.env.DATABASE.replace(
   "<PASSWORD>",
   process.env.DATABASE_PASSWORD
